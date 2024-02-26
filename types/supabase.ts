@@ -17,7 +17,7 @@ export type Database = {
           created_at: string
           dutyInChurch: string | null
           familyHead: string | null
-          gender: string
+          gender: string | null
           id: string
           name: string
           notes: string | null
@@ -33,7 +33,7 @@ export type Database = {
           created_at?: string
           dutyInChurch?: string | null
           familyHead?: string | null
-          gender: string
+          gender?: string | null
           id?: string
           name: string
           notes?: string | null
@@ -49,7 +49,7 @@ export type Database = {
           created_at?: string
           dutyInChurch?: string | null
           familyHead?: string | null
-          gender?: string
+          gender?: string | null
           id?: string
           name?: string
           notes?: string | null
