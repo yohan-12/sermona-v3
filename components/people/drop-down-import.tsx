@@ -31,6 +31,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { importCSVFileData } from "@/lib/actions";
 import { Label } from "../ui/label";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 const memberFields = [
   "name",
@@ -58,6 +59,11 @@ const ImportExportDropDown = () => {
   const [headerMappings, setHeaderMappings] = useState<Record<string, string>>(
     {}
   );
+  const resetImportState = () => {
+    setCsvHeaders([]);
+    setCsvData([]);
+    setHeaderMappings({});
+  };
 
   const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = (
     event
@@ -99,13 +105,12 @@ const ImportExportDropDown = () => {
     return csvData
       .map((row: CsvDataRow) => {
         let transformedRow: Record<string, any> = {};
-        let isValidRow = false; // Flag to track if the row has at least one valid field
-
+        let isValidRow = false; 
         Object.entries(row).forEach(([csvHeader, value]) => {
           const modelField = headerMappings[csvHeader];
           if (modelField && value !== null && value.trim() !== "") {
             transformedRow[modelField] = value.trim();
-            isValidRow = true; // Mark row as valid if at least one field is non-empty after trimming
+            isValidRow = true;
           }
         });
 
@@ -115,16 +120,20 @@ const ImportExportDropDown = () => {
   };
 
   const handleSubmit = async () => {
+    
     const transformedData = transformCsvDataForSupabase(
       csvData,
       headerMappings
     );
     console.log(transformedData);
     await importCSVFileData(transformedData);
+     resetImportState();
   };
 
   const triggerFileInput = () => {
-    fileInputRef.current?.click();
+   
+      fileInputRef.current?.click();
+      
   };
   return (
     <>
@@ -158,40 +167,26 @@ const ImportExportDropDown = () => {
           />
         </DialogTrigger>
         {csvHeaders.length > 0 && (
-          // <div>
-          //   {csvHeaders.map((header) => (
-          //     <div key={header}>
-          //       <label>{header}: </label>
-          //       <select
-          //         onChange={(e) => handleMappingChange(header, e.target.value)}
-          //       >
-          //         <option value="">Skip</option>
-          //         {memberFields.map((field) => (
-          //           <option key={field} value={field}>
-          //             {field}
-          //           </option>
-          //         ))}
-          //       </select>
-          //     </div>
-          //   ))}
-          //   <button onClick={handleSubmit}>Submit</button>
-          // </div>
-
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Are you absolutely sure?</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. Are you sure you want to
-                permanently delete this file from our servers?
+          <DialogContent className="max-w-2xl">
+            <DialogHeader className="space-y-3 p-4">
+              <DialogTitle className="text-center">
+                파일 헤더 정보 설정
+              </DialogTitle>
+              <DialogDescription className="text-center">
+                파일 헤더 정보를 데이타베이스 정보와 동기화 시키기
               </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-2 mx-auto">
               {csvHeaders.map((header) => (
                 <div key={header}>
                   <Label>{header}: </Label>
-                  <Select>
+                  <Select
+                    onValueChange={(value) =>
+                      handleMappingChange(header, value)
+                    }
+                  >
                     <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select a fruit" />
+                      <SelectValue placeholder="파일 헤더 매핑" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
@@ -206,11 +201,16 @@ const ImportExportDropDown = () => {
                   </Select>
                 </div>
               ))}
-              <Button onClick={handleSubmit}>Submit</Button>
             </div>
-
             <DialogFooter>
-              <Button type="submit">Confirm</Button>
+              <DialogClose asChild>
+                <div>
+                <Button type="button" variant="outline" onClick={resetImportState}>
+                  Close
+                </Button>
+                <Button onClick={handleSubmit}>확인</Button>
+                </div>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         )}
@@ -220,17 +220,3 @@ const ImportExportDropDown = () => {
 };
 
 export default ImportExportDropDown;
-              {
-                /* <select
-                    onChange={(e) =>
-                      handleMappingChange(header, e.target.value)
-                    }
-                  >
-                    <option value="">Skip</option>
-                    {memberFields.map((field) => (
-                      <option key={field} value={field}>
-                        {field}
-                      </option>
-                    ))}
-                  </select> */
-              }
