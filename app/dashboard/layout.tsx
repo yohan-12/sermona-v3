@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import MaxWidthWrapper from "@/components/landingPage/MaxWidthWrapper";
 import Navbar from "@/components/mainDashboard/Navbar";
+import SideNav from "@/components/mainDashboard/SideNav";
+import { cn } from "@/lib/utils";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -16,11 +18,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <MaxWidthWrapper>
-          <Navbar />
-        </MaxWidthWrapper>
-        {children}
+      <body className={cn("bg-white text-black", inter.className)}>
+        <main className="flex min-h-screen">
+          <SideNav />
+          <div className="w-full">
+            <MaxWidthWrapper>
+              <Navbar />
+            </MaxWidthWrapper>
+            {children}
+          </div>
+        </main>
       </body>
     </html>
   );

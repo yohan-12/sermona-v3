@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Papa from "papaparse";
 import {
   DropdownMenu,
@@ -32,6 +32,8 @@ import { Input } from "../ui/input";
 import { importCSVFileData } from "@/lib/actions";
 import { Label } from "../ui/label";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { createBrowserClient } from '@supabase/ssr'
+import { create } from "domain";
 
 const memberFields = [
   "name",
@@ -64,6 +66,10 @@ const ImportExportDropDown = () => {
     setCsvData([]);
     setHeaderMappings({});
   };
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = (
     event
@@ -120,7 +126,6 @@ const ImportExportDropDown = () => {
   };
 
   const handleSubmit = async () => {
-    
     const transformedData = transformCsvDataForSupabase(
       csvData,
       headerMappings
@@ -131,10 +136,37 @@ const ImportExportDropDown = () => {
   };
 
   const triggerFileInput = () => {
-   
       fileInputRef.current?.click();
-      
   };
+
+  //! Export function
+  const handleExport = (memberData: CsvDataRow[], fileName:string) => {
+      const csvString = Papa.unparse(memberData);
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${fileName}.csv`;
+      document.body.appendChild(link); // Necessary for Firefox
+      link.click();
+      document.body.removeChild(link); // Clean up
+      URL.revokeObjectURL(link.href);
+  }
+  const handleExportClick = async () => {
+    const fileName = prompt("파일 이름을 임력해 주세요:", "교적부")
+    if(fileName){
+      const { data: member, error } = await supabase
+        .from("member")
+        .select("*")
+        .order("created_at");
+     if(error){
+          console.error("err in fetching member data", error);
+          throw new Error("Error in fetching members");
+     }
+      handleExport(member, fileName)
+    }
+  }
+
+
   return (
     <>
       <Dialog>
@@ -152,7 +184,7 @@ const ImportExportDropDown = () => {
               <Upload className="mr-2 w-4 h-4" />
               Import
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={handleExportClick}>
               <Download className="mr-2 w-4 h-4" />
               Export
             </DropdownMenuItem>
