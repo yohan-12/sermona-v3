@@ -9,12 +9,32 @@ import {
   MessageSquareText,
   Users
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Nav } from "./nav";
 
 const SideNav = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+    useEffect(() => {
+      const handleResize = () => {
+        // Check if window width is less than Tailwind's 'md' breakpoint (768px by default)
+        if (window.innerWidth < 1100) {
+          setIsCollapsed(true);
+        } else {
+          setIsCollapsed(false);
+        }
+      };
+
+      // Add event listener
+      window.addEventListener("resize", handleResize);
+
+      // Call the function to set the initial state based on the current window width
+      handleResize();
+
+      // Remove event listener on cleanup
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
   function toggleSidebar() {
     setIsCollapsed(!isCollapsed);
   }
@@ -33,7 +53,7 @@ const SideNav = () => {
         isCollapsed={isCollapsed}
         links={[
           {
-            title: "홈 | 대시보드",
+            title: "홈 대시보드",
             href: "/dashboard",
             icon: LayoutDashboard,
             variant: "default",

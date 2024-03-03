@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Search } from "lucide-react";
 import {
   ColumnDef,
   flexRender,
@@ -72,19 +72,19 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="교인을 검색하세요..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <div className="flex gap-2">
+        <div className="flex gap-x-2">
+          <Input
+            placeholder="교인을 검색하세요..."
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="w-80"
+          />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
-                Columns
+               열 정보
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -107,6 +107,8 @@ export function DataTable<TData, TValue>({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
+        <div className="flex gap-2">
           <ImportExportDropDown />
           <Link
             href={"/dashboard/people/create"}

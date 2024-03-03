@@ -3,7 +3,7 @@ import { unstable_noStore as noStore } from "next/cache";
 export async function fetchChurchMember() {
   noStore();
   const supabase = await SupabaseServerClient();
-  const { data: member, error } = await supabase.from("member").select("*").order('created_at');
+  const { data: member, error } = await supabase.from("member").select("*").order('created_at', {ascending: false});
 
   if (error) {
     console.error("err in fetching member data", error);

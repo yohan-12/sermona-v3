@@ -101,8 +101,21 @@ const ImportExportDropDown = () => {
       event.target.value = "";
     }
   };
+  // const handleMappingChange = (csvHeader: string, modelField: string) => {
+  //   setHeaderMappings((prev) => ({ ...prev, [csvHeader]: modelField }));
+  // };
   const handleMappingChange = (csvHeader: string, modelField: string) => {
-    setHeaderMappings((prev) => ({ ...prev, [csvHeader]: modelField }));
+    setHeaderMappings((prev) => {
+      // If the 'Skip' option is selected, remove the header from the mappings
+      if (modelField === "none") {
+        const newMappings = { ...prev };
+        delete newMappings[csvHeader]; // Remove the mapping for this header
+        return newMappings;
+      }
+
+      // Otherwise, update the mapping for this header
+      return { ...prev, [csvHeader]: modelField };
+    });
   };
   const transformCsvDataForSupabase = (
     csvData: CsvDataRow[],
@@ -201,9 +214,7 @@ const ImportExportDropDown = () => {
         {csvHeaders.length > 0 && (
           <DialogContent className="max-w-2xl">
             <DialogHeader className="space-y-3 p-4">
-              <DialogTitle className="text-center">
-                파일 헤더 정보 설정
-              </DialogTitle>
+            
               <DialogDescription className="text-center">
                 파일 헤더 정보를 데이타베이스 정보와 동기화 시키기
               </DialogDescription>
@@ -222,7 +233,7 @@ const ImportExportDropDown = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="none">Skip</SelectItem>
+                        <SelectItem value="none">없음</SelectItem>
                         {memberFields.map((field) => (
                           <SelectItem key={field} value={field}>
                             {field}

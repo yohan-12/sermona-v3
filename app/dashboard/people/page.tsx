@@ -3,7 +3,6 @@ import { fetchChurchMember } from "@/lib/data";
 import { columns } from "@/lib/people/columns";
 import { notFound } from "next/navigation";
 export default async function DemoPage() {
-  // const data = await getData();
   const data = await fetchChurchMember()
   if(!data){
     notFound();

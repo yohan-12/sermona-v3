@@ -75,15 +75,18 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "name",
-    header: "이름",
+    header: () => <div className="whitespace-nowrap">이름</div>,
   },
   {
     accessorKey: "familyHead",
-    header: "가족대표",
+    header: () => <div className="whitespace-nowrap">가족대표</div>,
   },
   {
     accessorKey: "address",
     header: "주소",
+    cell: ({ row }) => {
+      return <div className="whitespace-nowrap">{row.getValue("address")}</div>;
+    },
   },
   {
     accessorKey: "gender",
@@ -95,7 +98,7 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "birthday",
-    header: "생년월일",
+    header: () => <div className="whitespace-nowrap">생년월일</div>,
     // cell: ({ row }) => {
     //   const dateValue = new Date(row.getValue("birthdate"));
     //   const formattedDate = dateValue.toISOString().slice(0, 10);
@@ -104,15 +107,15 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "solarLunarType",
-    header: "음/양",
+    header: () => <div className="whitespace-nowrap">음/양</div>,
   },
   {
     accessorKey: "dutyInChurch",
-    header: "현직분",
+    header: () => <div className="whitespace-nowrap">현직분</div>,
   },
   {
     accessorKey: "cellGroup",
-    header: "구역",
+    header: () => <div className="whitespace-nowrap">구역</div>,
   },
   {
     accessorKey: "phone",
@@ -120,7 +123,7 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "registeredDate",
-    header: "등록일",
+    header: () => <div className="whitespace-nowrap">등록일</div>,
     // cell: ({ row }) => {
     //   const dateValue = new Date(row.getValue("registeredDate"));
     //   const formattedDate = dateValue.toISOString().slice(0, 10);
@@ -129,7 +132,7 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "notes",
-    header: "추가정보",
+    header: () => <div className="whitespace-nowrap">추가정보</div>,
   },
   {
     id: "actions",
@@ -164,13 +167,13 @@ export const columns: ColumnDef<Member>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>작업</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              {/* <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(member.id)}
               >
                 Copy payment ID
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator /> */}
               <DropdownMenuItem>
                 <DialogTrigger className="flex items-center">
                   <Expand className="mr-2 h-4 w-4" />
@@ -191,7 +194,7 @@ export const columns: ColumnDef<Member>[] = [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-       
+
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="text-center">상세 정보</DialogTitle>
