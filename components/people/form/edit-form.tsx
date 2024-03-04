@@ -21,11 +21,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
 import { updateMember } from "@/lib/actions";
- 
+
 import { Database } from "@/types/supabase";
-type MemberType = Database['public']['Tables']['member']['Row'];
-const EditForm = ({member}: {member: MemberType}) => {
- const updateMemberWithId = updateMember.bind(null, member.id)
+type MemberType = Database["public"]["Tables"]["member"]["Row"];
+const EditForm = ({ member }: { member: MemberType }) => {
+  const updateMemberWithId = updateMember.bind(null, member.id);
   return (
     <Card className="container mx-auto border rounded-md shadow w-2/3">
       <form action={updateMemberWithId}>
@@ -55,7 +55,7 @@ const EditForm = ({member}: {member: MemberType}) => {
                 id="family-head"
                 name="familyHead"
                 type="text"
-                defaultValue={member.familyHead}
+                defaultValue={member.familyHead || ""}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ const EditForm = ({member}: {member: MemberType}) => {
                 name="ssn"
                 type="text"
                 placeholder="xxxxxx-xxxxxxx"
-                defaultValue={member.ssn}
+                defaultValue={member.ssn || ""}
               />
             </div>
 
@@ -78,7 +78,7 @@ const EditForm = ({member}: {member: MemberType}) => {
               >
                 성별
               </Label>
-              <Select defaultValue={member.gender} name="gender">
+              <Select defaultValue={member.gender || ""} name="gender">
                 <SelectTrigger>
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -96,7 +96,7 @@ const EditForm = ({member}: {member: MemberType}) => {
                 id="birthdate"
                 type="date"
                 name="birthdate"
-                defaultValue={member.birthday}
+                defaultValue={member.birthday || ""}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -106,7 +106,10 @@ const EditForm = ({member}: {member: MemberType}) => {
               >
                 음/양
               </Label>
-              <Select defaultValue={member.solarLunarType} name="solarLunarType">
+              <Select
+                defaultValue={member.solarLunarType || ""}
+                name="solarLunarType"
+              >
                 <SelectTrigger id="area">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -122,7 +125,7 @@ const EditForm = ({member}: {member: MemberType}) => {
                 type="text"
                 placeholder=""
                 name="cellgroup"
-                defaultValue={member.cellGroup}
+                defaultValue={member.cellGroup || ""}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -132,7 +135,10 @@ const EditForm = ({member}: {member: MemberType}) => {
               >
                 현직분
               </Label>
-              <Select defaultValue={member.dutyInChurch} name="dutyInChurch">
+              <Select
+                defaultValue={member.dutyInChurch || ""}
+                name="dutyInChurch"
+              >
                 <SelectTrigger id="area">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
@@ -153,7 +159,7 @@ const EditForm = ({member}: {member: MemberType}) => {
               <Input
                 type="date"
                 name="registeredDate"
-                defaultValue={member.registeredDate}
+                defaultValue={member.registeredDate || ""}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -162,7 +168,7 @@ const EditForm = ({member}: {member: MemberType}) => {
                 type="tel"
                 placeholder="010-1234-1234"
                 name="phone"
-                defaultValue={member.phone}
+                defaultValue={member.phone || ""}
               />
             </div>
           </div>
@@ -172,7 +178,7 @@ const EditForm = ({member}: {member: MemberType}) => {
               <Textarea
                 placeholder="서울시..."
                 name="address"
-                defaultValue={member.address}
+                defaultValue={member.address || ""}
               />
             </div>
           </div>
@@ -184,7 +190,7 @@ const EditForm = ({member}: {member: MemberType}) => {
               <Textarea
                 placeholder=""
                 name="notes"
-                defaultValue={member.notes}
+                defaultValue={member.notes || ""}
               />
             </div>
           </div>
