@@ -17,7 +17,7 @@ const FormSchema = z.object({
   ssn: z.string(),
   birthday: z.string(),
   solarLunarType: z.enum(["양력", "음력"]),
-  dutyInChurch: z.enum(["목사", "장로", "안수집사", "권사", "집사", "전도사"]),
+  dutyInChurch: z.enum(["목사", "장로", "안수집사", "권사", "집사", "전도사", "기타"]),
   cellGroup: z.string(),
   phone: z.string(),
   registeredDate: z.string(),
