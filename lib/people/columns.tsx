@@ -83,18 +83,18 @@ export const columns: ColumnDef<Member>[] = [
   },
   {
     accessorKey: "address",
-    header: "주소",
+    header: () => <div className="whitespace-nowrap">주소</div>,
     cell: ({ row }) => {
       return <div className="whitespace-nowrap">{row.getValue("address")}</div>;
     },
   },
   {
     accessorKey: "gender",
-    header: "성별",
+    header: () => <div className="whitespace-nowrap">성별</div>,
   },
   {
     accessorKey: "ssn",
-    header: "주민번호",
+    header: () => <div className="whitespace-nowrap">주민번호</div>,
   },
   {
     accessorKey: "birthday",
