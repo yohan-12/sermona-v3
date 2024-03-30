@@ -71,7 +71,7 @@ const SideNav = () => {
             variant: "ghost",
           },
           {
-            title: "제정",
+            title: "재정",
             href: "/dashboard/giving",
             icon: HandCoins,
             variant: "ghost",
