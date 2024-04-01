@@ -20,12 +20,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   selectedDate: string | null;
+  dateId: string | null;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   selectedDate,
+  dateId
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -34,9 +36,10 @@ export function DataTable<TData, TValue>({
   });
 
   return (
+    
     <div className="flex flex-col space-y-4">
       <div className="flex justify-between text-xl antialiased items-center">
-        <GivingForm selectedDate={selectedDate}/>
+        <GivingForm selectedDate={selectedDate} dateId={dateId}/>
       </div>
 
       <div className="rounded-md border">

@@ -25,12 +25,12 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { createDate, deleteDate } from "@/lib/actions/givingActions";
 
-
 const FormSchema = z.object({
   dob: z.date(),
 });
 type DatePickerFormProps = {
-  onDateSelect: (date: string | null) => void;
+  onDateSelect: (date: string | null, dateId: string | null) => void;
+
 };
 
 export function DatePickerForm({ onDateSelect }: DatePickerFormProps) {
@@ -41,52 +41,52 @@ export function DatePickerForm({ onDateSelect }: DatePickerFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
- useEffect(()=> {
-  const fetchDates = async() => {
-      let { data: date, error } = await supabase.from("date").select("id, title");
-      if(error){
-        console.error("err in fetching date from supabase", error)
-      }else{
-         console.log(date);
-      }
-    if(date){
-      setSelectedDates(date.map(date => ({id:date.id, title:date.title})))
+  useEffect(() => {
+    fetchDates();
+  }, []);
+  const fetchDates = async () => {
+    let { data: date, error } = await supabase.from("date").select("id, title");
+    if (date) {
+      console.log(date);
+      setSelectedDates(
+        date.map((date) => ({ id: date.id, title: date.title }))
+      );
+    } else {
+      console.error("err in fetching date from supabase", error);
     }
-  }
-  fetchDates()
- }, [])
-
+  };
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     if (data.dob) {
       const formattedDate = format(data.dob, "yyyy-MM-dd");
       const dateArray = await createDate(formattedDate);
-      if (dateArray && dateArray.length>0) {
-        const date = dateArray[0]
-        addDate({id: date.id, title: date.title});
+      console.log("dateArray:", dateArray);
+      if (dateArray && dateArray.length > 0) {
         form.reset();
+        fetchDates();
       } else {
         console.error("Returned Date from Supabase is null");
       }
     }
   }
-  const [selectedDates, setSelectedDates] = useState<{id:string; title:string}[]>([]);
+  const [selectedDates, setSelectedDates] = useState<
+    { id: string; title: string }[]
+  >([]);
 
-  const addDate = (newDate: {id:string; title:string}) => {
+  const addDate = (newDate: { id: string; title: string }) => {
     setSelectedDates((prev) => [...prev, newDate]);
   };
 
   const removeDate = async (index: number) => {
-    const dateId = selectedDates[index].id
+    const dateId = selectedDates[index].id;
     try {
-          await deleteDate(dateId);
-          setSelectedDates((currentDates) =>
-            currentDates.filter((_, i) => i !== index)
-          );
-          onDateSelect(null);
+      await deleteDate(dateId);
+      setSelectedDates((currentDates) =>
+        currentDates.filter((_, i) => i !== index)
+      );
+      onDateSelect(null, null);
     } catch (error) {
-      console.error("Error deleting date", error)
+      console.error("Error deleting date", error);
     }
-
   };
 
   return (
@@ -104,7 +104,7 @@ export function DatePickerForm({ onDateSelect }: DatePickerFormProps) {
                   variant="outline"
                   onClick={() => {
                     /* Function to display data for the date */
-                    onDateSelect(date.title);
+                    onDateSelect(date.title, date.id);
                   }}
                   aria-label="Display data"
                 >

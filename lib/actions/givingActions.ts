@@ -14,6 +14,7 @@ const DateSchema = z.object({
   }),
 });
 const CreateDate = DateSchema.omit({ id: true });
+
 export async function createDate(title: string): Promise<{id:string; title:string}[] | null> {
   const supabase = await SupabaseServerClient();
   const parsedData = CreateDate.parse({
@@ -28,9 +29,7 @@ export async function createDate(title: string): Promise<{id:string; title:strin
     console.error("Err inserting date", error);
     return null;
   } else {
-    revalidatePath("/dashboard/giving");
-    redirect("/dashboard/giving");
-    return data;
+       return data;
   }
 }
 export async function deleteDate(dateId: string) {

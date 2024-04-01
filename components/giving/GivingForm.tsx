@@ -29,6 +29,7 @@ type GivingFormData = {
   category?: string;
   method?: string;
   notes?: string;
+  dateId:string;
 };
 
 const givingSchema = z.object({
@@ -40,7 +41,7 @@ const givingSchema = z.object({
 });
 // type FormFields = z.infer<typeof givingSchema>;
 
-const GivingForm = ({ selectedDate }: { selectedDate: string | null }) => {
+const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dateId: string| null }) => {
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -66,6 +67,7 @@ const GivingForm = ({ selectedDate }: { selectedDate: string | null }) => {
     reset();
     setInputValue("")
     setIsSheetOpen(false);
+    console.log(dateId);
   };
   useEffect(() => {
     const fetchMembers = async () => {
@@ -88,6 +90,7 @@ const GivingForm = ({ selectedDate }: { selectedDate: string | null }) => {
           member.name.toLowerCase().includes(inputValue.toLowerCase())
         )
       );
+
     } else {
       setFilteredMembers([]);
     }

@@ -5,8 +5,10 @@ import { DataTable } from '@/components/giving/GivingDataTable'
 import { useState } from 'react'
 const Page = () => {
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const handleDate = (date: string | null) => {
+  const [dateId, setDateId] = useState<string | null>(null)
+  const handleDate = (date: string | null, dateId: string | null) => {
     setSelectedDate(date)
+    setDateId(dateId)
   }
   return (
     // <div className='flex mx-auto p-4'><DatePickerForm/></div>
@@ -15,7 +17,7 @@ const Page = () => {
         <DatePickerForm onDateSelect={handleDate} />
       </div>
       <div className="w-1/2">
-        {selectedDate && <DataTable columns={columns} data={[]} selectedDate={selectedDate}/>}
+        {selectedDate && <DataTable columns={columns} data={[]} selectedDate={selectedDate} dateId = {dateId}/>}
       </div>
     </div>
   );
