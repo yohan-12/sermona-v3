@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { CalendarIcon, XOctagon, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import { createBrowserClient } from "@supabase/ssr";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -22,42 +22,71 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createDate, deleteDate } from "@/lib/actions/givingActions";
+
 
 const FormSchema = z.object({
   dob: z.date(),
-  //   dob: z.date({
-  //     required_error: "A date of birth is required.",
-  //   }),
 });
 type DatePickerFormProps = {
-  onDateSelect: (date:string | null) => void
-}
+  onDateSelect: (date: string | null) => void;
+};
 
-export function DatePickerForm({ onDateSelect} : DatePickerFormProps) {
+export function DatePickerForm({ onDateSelect }: DatePickerFormProps) {
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
-
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    if (data.dob) {
-      const formattedDate = format(data.dob, "yyyy-MM-dd");
-      addDate(formattedDate);
-      // onDateSelect(formattedDate)
-      form.reset();
+ useEffect(()=> {
+  const fetchDates = async() => {
+      let { data: date, error } = await supabase.from("date").select("id, title");
+      if(error){
+        console.error("err in fetching date from supabase", error)
+      }else{
+         console.log(date);
+      }
+    if(date){
+      setSelectedDates(date.map(date => ({id:date.id, title:date.title})))
     }
   }
-  const [selectedDates, setSelectedDates] = useState<string[]>([]);
+  fetchDates()
+ }, [])
 
-  const addDate = (newDate: string) => {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (data.dob) {
+      const formattedDate = format(data.dob, "yyyy-MM-dd");
+      const dateArray = await createDate(formattedDate);
+      if (dateArray && dateArray.length>0) {
+        const date = dateArray[0]
+        addDate({id: date.id, title: date.title});
+        form.reset();
+      } else {
+        console.error("Returned Date from Supabase is null");
+      }
+    }
+  }
+  const [selectedDates, setSelectedDates] = useState<{id:string; title:string}[]>([]);
+
+  const addDate = (newDate: {id:string; title:string}) => {
     setSelectedDates((prev) => [...prev, newDate]);
   };
 
-  const removeDate = (index: number) => {
-    setSelectedDates((currentDates) =>
-      currentDates.filter((_, i) => i !== index)
-    );
-    onDateSelect(null)
+  const removeDate = async (index: number) => {
+    const dateId = selectedDates[index].id
+    try {
+          await deleteDate(dateId);
+          setSelectedDates((currentDates) =>
+            currentDates.filter((_, i) => i !== index)
+          );
+          onDateSelect(null);
+    } catch (error) {
+      console.error("Error deleting date", error)
+    }
+
   };
 
   return (
@@ -68,17 +97,14 @@ export function DatePickerForm({ onDateSelect} : DatePickerFormProps) {
           const actualIndex = selectedDates.length - 1 - reversedIndex;
 
           return (
-            <div
-              key={actualIndex}
-              className="flex items-center justify-normal"
-            >
-              <span className="">{date}</span>
+            <div key={actualIndex} className="flex items-center justify-normal">
+              <span className="">{date.title}</span>
               <div className="space-x-1">
                 <Button
                   variant="outline"
                   onClick={() => {
                     /* Function to display data for the date */
-                    onDateSelect(date)
+                    onDateSelect(date.title);
                   }}
                   aria-label="Display data"
                 >
