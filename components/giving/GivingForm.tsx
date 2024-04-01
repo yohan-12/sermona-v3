@@ -18,7 +18,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Icons } from "../icons";
 import { useEffect, useState } from "react";
-
+import { createGiving } from "@/lib/actions/givingActions";
 export type MemberNameId = {
   id: string;
   name: string;
@@ -62,12 +62,22 @@ const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dat
     resolver: zodResolver(givingSchema), //connect zod schema to react-hook-form
   });
   const onSubmit: SubmitHandler<GivingFormData> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(data);
+    const formData = new FormData();
+    Object.keys(data).forEach(key => {
+      const value = data[key as keyof GivingFormData]
+      if(value !== undefined){
+        formData.append(key, value.toString())
+      }
+    })
+    if(dateId){
+      console.log(dateId);
+      formData.append('dateId', dateId);
+    }
+   await createGiving(formData)
     reset();
     setInputValue("")
     setIsSheetOpen(false);
-    console.log(dateId);
+    
   };
   useEffect(() => {
     const fetchMembers = async () => {
@@ -130,29 +140,26 @@ const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dat
               <Input
                 id="memberName"
                 type="text"
+                name="memberId"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 className="border p-2 rounded-md focus:border-blue-500 focus:outline-none"
                 autoComplete="off"
               />
               {filteredMembers.length > 0 && (
-                  <div className=" w-full mt-1 border border-gray-200 rounded-md bg-white shadow-lg max-h-40 overflow-auto">
-                    {filteredMembers.map((member) => (
-                      <div
-                        key={member.id}
-                        className="cursor-pointer hover:bg-gray-100 p-2"
-                        onClick={() =>
-                          handleSelectMember(member.id, member.name)
-                        }
-                      >
-                        {member.name}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-      
+                <div className=" w-full mt-1 border border-gray-200 rounded-md bg-white shadow-lg max-h-40 overflow-auto">
+                  {filteredMembers.map((member) => (
+                    <div
+                      key={member.id}
+                      className="cursor-pointer hover:bg-gray-100 p-2"
+                      onClick={() => handleSelectMember(member.id, member.name)}
+                    >
+                      {member.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Hidden input to store the selected member ID */}
             <input type="hidden" {...register("memberId")} />
@@ -165,6 +172,7 @@ const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dat
                 {...register("amount", { valueAsNumber: true })}
                 id="amount"
                 type="number"
+                name="amount"
                 className="flex-1 border p-2 rounded-md focus:border-blue-500 focus:outline-none"
               />
             </div>
@@ -181,6 +189,7 @@ const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dat
               <Input
                 {...register("category")}
                 id="category"
+                name="category"
                 type="text"
                 className="flex-1 border p-2 rounded-md focus:border-blue-500 focus:outline-none"
               />
@@ -198,6 +207,7 @@ const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dat
               <Input
                 {...register("method")}
                 id="method"
+                name="method"
                 type="text"
                 className="flex-1 border p-2 rounded-md focus:border-blue-500 focus:outline-none"
               />
@@ -215,6 +225,7 @@ const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dat
               <Input
                 {...register("notes")}
                 id="notes"
+                name="notes"
                 type="text"
                 className="flex-1 border p-2 rounded-md focus:border-blue-500 focus:outline-none"
               />
