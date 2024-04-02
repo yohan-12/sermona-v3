@@ -42,3 +42,16 @@ export async function fetchMemberById(id: string) {
     return member;
   }
 }
+export async function fetchGiving(){
+  noStore();
+  const supabase = await SupabaseServerClient();
+  let { data: giving, error } = await supabase.from("giving").select("memberId, amount, category, method, notes");
+  if(error){
+    console.error("Err fetching church member giving data", error)
+    throw new Error("Error fetching member giving")
+  }
+  else {
+    console.log(giving);
+    return giving
+  }
+}

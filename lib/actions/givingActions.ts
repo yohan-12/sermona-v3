@@ -61,10 +61,11 @@ export async function createGiving(formData: FormData) {
   const supabase = await SupabaseServerClient();
   const parsedData = CreateGiving.parse({
     memberId: formData.get("memberId"),
-    amount: formData.get("amount"),
+    amount: Number(formData.get("amount")),
     category: formData.get("category"),
     method: formData.get("method"),
     notes: formData.get("notes"),
+    dateId: formData.get("dateId")
   });
   const { data, error } = await supabase
     .from("giving")

@@ -21,13 +21,15 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   selectedDate: string | null;
   dateId: string | null;
+  getGiving: () => Promise<void>
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   selectedDate,
-  dateId
+  dateId,
+  getGiving
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -39,7 +41,7 @@ export function DataTable<TData, TValue>({
     
     <div className="flex flex-col space-y-4">
       <div className="flex justify-between text-xl antialiased items-center">
-        <GivingForm selectedDate={selectedDate} dateId={dateId}/>
+        <GivingForm selectedDate={selectedDate} dateId={dateId} getGiving={getGiving}/>
       </div>
 
       <div className="rounded-md border">

@@ -3,15 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 export type Giving = {
-  id: string; 
-  createdAt: string;
-  memberId: string; 
-  name: string,
+  memberId: string;
   amount: number;
-  category: string; // The category of the giving, such as "Tithe", "Offering", etc. This could be managed as an enum.
-  date: string; 
-  method: string | null; // The method of giving, e.g., "Cash", "Check", "Online", which could also be an enum
-  notes?: string | null; 
+  category: string;
+  method: string | null;
+  notes: string | null;
+  // memberName: string;
 };
 // Assuming you have a function to get a member's name by their ID
 const getMemberNameById = (memberId: string): string => {

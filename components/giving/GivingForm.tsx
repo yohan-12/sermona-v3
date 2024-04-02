@@ -41,7 +41,7 @@ const givingSchema = z.object({
 });
 // type FormFields = z.infer<typeof givingSchema>;
 
-const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dateId: string| null }) => {
+const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string | null, dateId: string| null, getGiving: ()=> Promise<void> }) => {
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -77,6 +77,7 @@ const GivingForm = ({ selectedDate, dateId }: { selectedDate: string | null, dat
     reset();
     setInputValue("")
     setIsSheetOpen(false);
+    await getGiving()
     
   };
   useEffect(() => {
