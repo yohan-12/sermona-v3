@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 interface DateListProps {
   dates: { id: any; title: any }[] | null | undefined;
 }
+interface Member {
+  name: string;
+}
 interface GivingData {
   amount: number;
   category: string;
@@ -37,15 +40,16 @@ const DateList = ({ dates }: DateListProps) => {
       console.error("error fetching giving data", error);
       return null;
     }
+    console.log(data);
     // Transform data to include member name directly
     const transformedData = data.map((giving) => ({
       amount: giving.amount,
       category: giving.category,
       method: giving.method,
       notes: giving.notes,
-      memberName: giving.member.name, // Directly include memberName
+      memberName: (giving.member as unknown as Member).name,
     }));
-
+    console.log(transformedData);
     setGivingData(transformedData)
   
   }
