@@ -29,6 +29,7 @@
     "@tanstack/react-table": "^8.12.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.0.8",
     "lottie-react": "^2.4.0",

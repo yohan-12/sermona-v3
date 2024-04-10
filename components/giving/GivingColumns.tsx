@@ -8,7 +8,7 @@ export type Giving = {
   category: string;
   method: string | null;
   notes: string | null;
-  // memberName: string;
+  memberName: string | null;
 };
 // Assuming you have a function to get a member's name by their ID
 const getMemberNameById = (memberId: string): string => {
@@ -18,10 +18,14 @@ const getMemberNameById = (memberId: string): string => {
 };
 
 export const columns: ColumnDef<Giving>[] = [
+  // {
+  //   // accessorFn: (row) => getMemberNameById(row.memberId),
+  //   id: "memberName", // 'id' is needed for columns created using accessorFn
+  //   header: "이름",
+  // },
   {
-    accessorFn: (row) => getMemberNameById(row.memberId),
-    id: "memberName", // 'id' is needed for columns created using accessorFn
-    header: "이름",
+    accessorKey: "memberName",
+    header: "이름", // Assuming 'Memo' refers to the 'notes'
   },
   {
     accessorKey: "amount",
@@ -29,7 +33,7 @@ export const columns: ColumnDef<Giving>[] = [
   },
   {
     accessorKey: "category",
-    header: "종류", //주일헌금, 십일조, 감사헌금, 선교헌금, 구제헌금, 특별헌금 
+    header: "종류", //주일헌금, 십일조, 감사헌금, 선교헌금, 구제헌금, 특별헌금
   },
   {
     accessorKey: "method",

@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
+import GivingForm from "./GivingForm";
 import {
   Table,
   TableBody,
@@ -15,21 +15,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import GivingForm from "../../app/dashboard/giving/component/GivingForm";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  selectedDate: string | null;
-  dateId: string | null;
-  getGiving: () => Promise<void>;
+  dateId: string;
+  dateTitle: string | null;
+  handleSubmit: (dateId: string) => void | Promise<void>
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  selectedDate,
   dateId,
-  getGiving,
+  dateTitle,
+  handleSubmit
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -39,10 +39,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col space-y-4">
-      {/* <div className="flex justify-between text-xl antialiased items-center">
-        <GivingForm selectedDate={selectedDate} dateId={dateId} getGiving={getGiving}/>
-      </div> */}
-
+      <div className="flex justify-between text-xl antialiased items-center">
+        {dateTitle}
+        <GivingForm dateId={dateId} handleGivingSubmit={handleSubmit}/>
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

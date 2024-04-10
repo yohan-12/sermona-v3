@@ -15,18 +15,20 @@ export async function fetchChurchMember() {
     return member;
   }
 }
-// export async function fetchDate() {
-//   noStore();
-//   const supabase = await SupabaseServerClient();
+export async function getDate() {
+  noStore();
+  const supabase = await SupabaseServerClient();
 
-//   let { data: date, error } = await supabase.from("date").select("title");
-//   if(error){
-//     console.error("err in fetching date from supabase", error)
-//   }else{
-//      console.log(date);
-//      return date;
-//   }
-// }
+  let { data: date, error } = (await supabase.from("date").select("id, title").order("created_at", {
+    ascending: false
+  }));
+  if(error){
+    console.error("err in fetching date from supabase", error)
+  }else{
+    
+     return date;
+  }
+}
 export async function fetchMemberById(id: string) {
   const supabase = await SupabaseServerClient();
   //maybeSingle() only return one object instead of return an array of objects

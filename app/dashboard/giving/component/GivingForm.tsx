@@ -13,35 +13,32 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Icons } from "../icons";
+import { Button } from "../../../../components/ui/button";
+import { Input } from "../../../../components/ui/input";
+import { Label } from "../../../../components/ui/label";
+import { Icons } from "../../../../components/icons";
 import { useEffect, useState } from "react";
 import { createGiving } from "@/lib/actions/givingActions";
+
 export type MemberNameId = {
   id: string;
   name: string;
 };
-type GivingFormData = {
-  memberId: string;
-  amount: number;
-  category?: string;
-  method?: string;
-  notes?: string;
-  dateId:string;
-};
 
-const givingSchema = z.object({
-  memberId: z.string().min(1, "이름은 필수 항목 입니다"),
-  amount: z.number().min(1, "액수는 필수 항목 입니다"),
+export const givingSchema = z.object({
+  memberId: z.string(),
+  amount: z.number(),
   category: z.string().optional(),
   method: z.string().optional(),
   notes: z.string().optional(),
+  dateId: z.string(),
 });
-// type FormFields = z.infer<typeof givingSchema>;
-
-const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string | null, dateId: string| null, getGiving: ()=> Promise<void> }) => {
+export type GivingFormData = z.infer<typeof givingSchema>
+interface GivingFormProps {
+  dateId: string;
+  handleGivingSubmit: (dateId:string) => void | Promise<void>
+}
+const GivingForm = ({ dateId, handleGivingSubmit }: GivingFormProps) => {
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -59,26 +56,27 @@ const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string 
     formState: { errors, isSubmitting },
     reset,
   } = useForm<GivingFormData>({
-    resolver: zodResolver(givingSchema), //connect zod schema to react-hook-form
+    resolver: zodResolver(givingSchema),
   });
+  useEffect(() => {
+    setValue("dateId", dateId); // This sets the dateId in the form's state
+  }, [dateId, setValue]);
+
   const onSubmit: SubmitHandler<GivingFormData> = async (data) => {
-    const formData = new FormData();
-    Object.keys(data).forEach(key => {
-      const value = data[key as keyof GivingFormData]
-      if(value !== undefined){
-        formData.append(key, value.toString())
-      }
-    })
-    if(dateId){
-      console.log(dateId);
-      formData.append('dateId', dateId);
+    try {
+      await createGiving(data);
+      handleGivingSubmit(dateId)
+      reset();
+      setInputValue("");
+      setIsSheetOpen(false);
+    } catch (error) {
+      console.error("submit action error", error);
     }
-   await createGiving(formData)
-    reset();
-    setInputValue("")
-    setIsSheetOpen(false);
-    await getGiving()
-    
+
+    // await createGiving(formData);
+    // reset();
+    // setInputValue("");
+    // setIsSheetOpen(false);
   };
   useEffect(() => {
     const fetchMembers = async () => {
@@ -101,23 +99,20 @@ const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string 
           member.name.toLowerCase().includes(inputValue.toLowerCase())
         )
       );
-
     } else {
       setFilteredMembers([]);
     }
   }, [inputValue, members]);
-    const handleSelectMember = (memberId: string, memberName: string) => {
-      setSelectedMemberId(memberId);
-      setInputValue(memberName);
-      setValue("memberId", memberId)
-      setFilteredMembers([]);
-    };
 
+  const handleSelectMember = (memberId: string, memberName: string) => {
+    setSelectedMemberId(memberId);
+    setInputValue(memberName);
+    setValue("memberId", memberId);
+    setFilteredMembers([]);
+  };
 
   return (
     <>
-      {selectedDate}
-
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
           <Button variant="default">
@@ -126,19 +121,22 @@ const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string 
           </Button>
         </SheetTrigger>
         <SheetContent className="p-4">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <SheetHeader>
-              <SheetTitle className="text-lg font-bold">
-                교인 헌금 입력
-              </SheetTitle>
-            </SheetHeader>
+          <SheetHeader>
+            <SheetTitle className="text-lg font-bold">
+              교인 헌금 입력
+            </SheetTitle>
+          </SheetHeader>
 
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Autocomplete Member Input */}
             <div className="flex items-center space-x-2">
+              {/* <AutoInput /> */}
               <Label htmlFor="memberName" className="min-w-[80px]">
                 이름
               </Label>
+
               <Input
+                {...register("memberId")}
                 id="memberName"
                 type="text"
                 name="memberId"
@@ -161,10 +159,8 @@ const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string 
                 </div>
               )}
             </div>
-
             {/* Hidden input to store the selected member ID */}
-            <input type="hidden" {...register("memberId")} />
-
+            {/* <input type="hidden" {...register("memberId")} /> */}
             <div className="flex items-center space-x-2">
               <Label htmlFor="amount" className="min-w-[80px]">
                 액수
@@ -182,7 +178,6 @@ const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string 
                 {errors.amount.message}
               </div>
             )}
-
             <div className="flex items-center space-x-2">
               <Label htmlFor="category" className="min-w-[80px]">
                 종류
@@ -200,7 +195,6 @@ const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string 
                 {errors.category.message}
               </div>
             )}
-
             <div className="flex items-center space-x-2">
               <Label htmlFor="method" className="min-w-[80px]">
                 지불 방법
@@ -218,7 +212,6 @@ const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string 
                 {errors.method.message}
               </div>
             )}
-
             <div className="flex items-center space-x-2">
               <Label htmlFor="notes" className="min-w-[80px]">
                 메모
@@ -234,19 +227,18 @@ const GivingForm = ({ selectedDate, dateId, getGiving }: { selectedDate: string 
             {errors.notes && (
               <div className="text-red-500 text-sm">{errors.notes.message}</div>
             )}
-
+            <Input type="hidden" {...register("dateId")} />
             <SheetFooter className="flex justify-center space-x-3">
               <SheetClose asChild>
                 <Button variant="outline">닫기</Button>
               </SheetClose>
-
               <Button disabled={isSubmitting} type="submit" variant="default">
                 {isSubmitting && (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}{" "}
                 저장
               </Button>
-            </SheetFooter>
+            </SheetFooter>{" "}
           </form>
         </SheetContent>
       </Sheet>
