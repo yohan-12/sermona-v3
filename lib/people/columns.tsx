@@ -219,29 +219,6 @@ export const columns: ColumnDef<Member>[] = [
                       </div>
                     ) : null
                   )}
-
-                  {/* {member.name && (
-                    <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="familyHead">이름</Label>
-                      <Input
-                        id="familyHead"
-                        value={member.name}
-                        readOnly
-                        className="bg-gray-100"
-                      />
-                    </div>
-                  )}
-                  {member.familyHead && (
-                    <div className="flex flex-col space-y-1.5">
-                      <Label htmlFor="familyHead">가족대표</Label>
-                      <Input
-                        id="familyHead"
-                        value={member.familyHead}
-                        readOnly
-                        className="bg-gray-100"
-                      />
-                    </div>
-                  )} */}
                 </div>
               </CardContent>
             </Card>

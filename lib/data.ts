@@ -19,7 +19,7 @@ export async function getDate() {
   noStore();
   const supabase = await SupabaseServerClient();
 
-  let { data: date, error } = (await supabase.from("date").select("id, title").order("created_at", {
+  let { data: date, error } = (await supabase.from("date").select("id, title, description").order("created_at", {
     ascending: false
   }));
   if(error){
