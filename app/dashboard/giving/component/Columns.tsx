@@ -1,7 +1,14 @@
 "use client";
 
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle
+} from "@/components/ui/sheet";
 import { ColumnDef } from "@tanstack/react-table";
-
+import { ArrowUpDown, MoreVertical } from "lucide-react";
+import EditGivingForm from "./EditGivingForm";
 export type Giving = {
   id: string;
   memberName: string;
@@ -10,7 +17,6 @@ export type Giving = {
   method: string | null;
   notes: string | null;
 };
-import { MoreVertical, ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,10 +24,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { deleteGiving } from "@/lib/actions/givingActions";
+import { useState } from "react";
 
 export const columns: ColumnDef<Giving>[] = [
   {
@@ -68,33 +74,54 @@ export const columns: ColumnDef<Giving>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const [isSheetOpen, setIsSheetOpen] = useState(false)
       const giving = row.original;
-
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>작업</DropdownMenuLabel>
-            <DropdownMenuItem
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>작업</DropdownMenuLabel>
+              {/* <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(giving.id)}
             >
               Copy payment ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>편집</DropdownMenuItem>
-            <DropdownMenuItem
-              className="hover:bg-red-500 hover:text-white"
-              onClick={async () => await deleteGiving(giving.id)}
-            >
-              삭제
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <DropdownMenuSeparator /> */}
+              <DropdownMenuItem className="hover:text-gray-400" onClick={() => setIsSheetOpen(true)}>
+                edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="hover:bg-red-500 hover:text-white"
+                onClick={async () => {
+                  await deleteGiving(giving.id);
+                  window.location.reload();
+                }}
+              >
+                삭제
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetContent className="p-4">
+              <SheetHeader>
+                <SheetTitle className="text-lg font-bold">
+                  기록 수정 하기
+                </SheetTitle>
+              </SheetHeader>
+              <EditGivingForm
+                giving={giving}
+                onClose={() => setIsSheetOpen(false)}
+              />
+            </SheetContent>
+          </Sheet>
+        </>
       );
     },
   },

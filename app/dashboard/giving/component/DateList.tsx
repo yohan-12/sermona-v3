@@ -84,7 +84,7 @@ const DateList = ({ dates }: DateListProps) => {
           {dates?.map((date, id) => (
             <li
               key={id}
-              className="flex space-x-2 justify-between items-center border"
+              className="flex space-x-2 justify-between items-center"
             >
               <span className="">{date.title}</span>
               <div className="justify-end">
