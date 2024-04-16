@@ -264,7 +264,7 @@ const items = [
     href: "/dashboard/ai-assistant",
   },
   {
-    title: "제정",
+    title: "재정",
     description: "Discover the beauty of thoughtful and functional design.",
     header: <SkeletonSunRise />,
     icon: <IconSignature className="h-4 w-4 text-neutral-500" />,

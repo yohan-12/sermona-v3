@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { deleteDate } from "@/lib/actions/givingActions";
 import { createBrowserClient } from "@supabase/ssr";
 import { Plus, XOctagon } from "lucide-react";
-import { useState } from "react";
-import { columns } from "./Columns";
+import { useCallback, useEffect, useState } from "react";
+import { getColumns } from "./Columns";
 import { DataTable } from "./DataTable";
 import EditBtn from "./DateEditBtn";
 import DateForm from "./DateForm";
@@ -36,9 +36,7 @@ const DateList = ({ dates }: DateListProps) => {
   const [dateTitle, setDateTitle] = useState<string | null>(null);
   const [dateDescription, setDateDescription] = useState<string | null>(null);
   const [givingData, setGivingData] = useState<GivingData[]>([]);
-  const handleFormSubmit = async (dateId: string) => {
-    await getGivingData(dateId);
-  };
+  const [forceUpdate, setForceUpdate] = useState(0);
   const getGivingData = async (dateId: string) => {
     const { data, error } = await supabase
       .from("giving")
@@ -61,6 +59,17 @@ const DateList = ({ dates }: DateListProps) => {
     console.log(transformedData);
     setGivingData(transformedData);
   };
+  const handleFormSubmit = async (dateId: string) => {
+    await getGivingData(dateId);
+    setForceUpdate((u) => u + 1);
+  };
+  useEffect(() => {
+    if (dateId) {
+      getGivingData(dateId);
+    }
+  }, [dateId, forceUpdate]); // React to changes in either `dateId` or `forceUpdate`
+
+  const columns = getColumns(handleFormSubmit);
 
   const handleClick = async (
     id: string,

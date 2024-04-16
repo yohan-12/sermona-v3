@@ -70,8 +70,14 @@ export async function createGiving(givingData: GivingFormData) {
   revalidatePath("/dashboard/giving");
 }
 
-
-export async function updateGiving({amount, category, givingId, memberId, method, notes}: updateProps) {
+export async function updateGiving({
+  amount,
+  category,
+  givingId,
+  memberId,
+  method,
+  notes,
+}: updateProps) {
   console.log(amount);
   const supabase = await SupabaseServerClient();
   const { data, error } = await supabase
@@ -79,14 +85,28 @@ export async function updateGiving({amount, category, givingId, memberId, method
     .update({ amount, category, memberId, method, notes })
     .eq("id", givingId)
     .select();
-  if(error){
-    console.error("err in updating giving ", error)
-  }else{
+  if (error) {
+    console.error("err in updating giving ", error);
+  } else {
     console.log("Success giving update");
   }
-    revalidatePath("/dashboard/giving");
+  revalidatePath("/dashboard/giving");
 }
+export async function getDateId(givingId: string) {
+  const supabase = await SupabaseServerClient();
+  console.log(givingId);
+  let { data, error } = await supabase
+    .from("givings") // Assuming the table name is 'givings'
+    .select("dateId")
+    .eq("id", givingId)
+     // Assuming that there's only one matching record
 
+  if (error) {
+    console.error("Error fetching dateId:", error);
+    return {};
+  }
+  return data;
+}
 export async function deleteGiving(givingId: string) {
   const supabase = await SupabaseServerClient();
   const { error } = await supabase.from("giving").delete().eq("id", givingId);

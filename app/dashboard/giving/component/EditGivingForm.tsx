@@ -10,7 +10,7 @@ import { Button } from "../../../../components/ui/button";
 import { Input } from "../../../../components/ui/input";
 import { Label } from "../../../../components/ui/label";
 import { Giving } from "./Columns";
-import { updateGiving } from "@/lib/actions/givingActions";
+import { getDateId, updateGiving } from "@/lib/actions/givingActions";
 
 export type MemberNameId = {
   id: string;
@@ -31,13 +31,14 @@ export type GivingFormData = z.infer<typeof givingSchema>;
 interface EditGivingFormProps {
   giving: Giving;
   onClose: () => void;
+  handleFormSubmit: (dateId: string) => Promise<void>;
 }
-const EditGivingForm = ({ giving, onClose }: EditGivingFormProps) => {
+const EditGivingForm = ({ giving, onClose, handleFormSubmit }: EditGivingFormProps) => {
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
+ 
   const [members, setMembers] = useState<MemberNameId[]>([]);
   const [inputValue, setInputValue] = useState(giving.memberName);
   const [filteredMembers, setFilteredMembers] = useState<MemberNameId[]>([]);
@@ -62,10 +63,18 @@ const EditGivingForm = ({ giving, onClose }: EditGivingFormProps) => {
 
   const onSubmit: SubmitHandler<GivingFormData> = async (data) => {
     try {
-      console.log(data);
+      const {data: dateID, error} = await supabase.from('giving').select('dateId').eq("id", data.givingId).single() 
+      if(error){
+        console.error("error fetching dateID", error);
+      }
+      if(!dateID || !dateID.dateId){
+        console.error("no dateID found in the object")
+        return
+      }
+      handleFormSubmit(dateID.dateId)
+
       await updateGiving(data)
-      //   await createGiving(data);
-      //   handleGivingSubmit(dateId);
+      // handleFormSubmit(dateID as any)
       reset();
       setInputValue("");
       onClose();
@@ -73,11 +82,6 @@ const EditGivingForm = ({ giving, onClose }: EditGivingFormProps) => {
     } catch (error) {
       console.error("submit action error", error);
     }
-
-    // await createGiving(formData);
-    // reset();
-    // setInputValue("");
-    // setIsSheetOpen(false);
   };
   useEffect(() => {
     const fetchMembers = async () => {

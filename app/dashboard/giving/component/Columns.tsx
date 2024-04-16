@@ -29,7 +29,9 @@ import {
 import { deleteGiving } from "@/lib/actions/givingActions";
 import { useState } from "react";
 
-export const columns: ColumnDef<Giving>[] = [
+type handleFormSubmit = (dateId: string) => Promise<void>;
+
+export const getColumns = (handleFormSubmit: handleFormSubmit): ColumnDef<Giving>[] => [
   {
     accessorKey: "memberName",
     header: "이름",
@@ -88,14 +90,8 @@ export const columns: ColumnDef<Giving>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>작업</DropdownMenuLabel>
-              {/* <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(giving.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator /> */}
               <DropdownMenuItem className="hover:text-gray-400" onClick={() => setIsSheetOpen(true)}>
-                edit
+                정보 수정
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="hover:bg-red-500 hover:text-white"
@@ -118,6 +114,7 @@ export const columns: ColumnDef<Giving>[] = [
               <EditGivingForm
                 giving={giving}
                 onClose={() => setIsSheetOpen(false)}
+                handleFormSubmit={handleFormSubmit}
               />
             </SheetContent>
           </Sheet>

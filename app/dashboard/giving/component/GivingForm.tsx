@@ -73,10 +73,6 @@ const GivingForm = ({ dateId, handleGivingSubmit }: GivingFormProps) => {
       console.error("submit action error", error);
     }
 
-    // await createGiving(formData);
-    // reset();
-    // setInputValue("");
-    // setIsSheetOpen(false);
   };
   useEffect(() => {
     const fetchMembers = async () => {
