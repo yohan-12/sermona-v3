@@ -95,9 +95,11 @@ export const getColumns = (handleFormSubmit: handleFormSubmit): ColumnDef<Giving
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="hover:bg-red-500 hover:text-white"
-                onClick={async () => {
-                  await deleteGiving(giving.id);
-                  window.location.reload();
+                onClick={async ():Promise<void> => {
+                 const dateID = await deleteGiving(giving.id);
+                  // window.location.reload();
+                
+                  handleFormSubmit(dateID)
                 }}
               >
                 삭제

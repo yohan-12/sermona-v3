@@ -92,26 +92,29 @@ export async function updateGiving({
   }
   revalidatePath("/dashboard/giving");
 }
-export async function getDateId(givingId: string) {
+export async function getDateId(givingId: string): Promise<string> {
   const supabase = await SupabaseServerClient();
-  console.log(givingId);
   let { data, error } = await supabase
-    .from("givings") // Assuming the table name is 'givings'
+    .from("giving") // Assuming the table name is 'givings'
     .select("dateId")
     .eq("id", givingId)
-     // Assuming that there's only one matching record
+    .single()
 
   if (error) {
     console.error("Error fetching dateId:", error);
-    return {};
+    return "";
   }
-  return data;
+  return data?.dateId;
 }
+
 export async function deleteGiving(givingId: string) {
   const supabase = await SupabaseServerClient();
+  const dateID = await getDateId(givingId)
+  console.log(dateID);
   const { error } = await supabase.from("giving").delete().eq("id", givingId);
   if (error) {
     throw new Error("err deleting giving");
   }
+  return dateID
   revalidatePath("/dashboard/giving");
 }

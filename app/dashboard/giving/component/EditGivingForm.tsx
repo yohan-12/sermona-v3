@@ -72,13 +72,10 @@ const EditGivingForm = ({ giving, onClose, handleFormSubmit }: EditGivingFormPro
         return
       }
       handleFormSubmit(dateID.dateId)
-
       await updateGiving(data)
-      // handleFormSubmit(dateID as any)
       reset();
       setInputValue("");
       onClose();
-      // setIsSheetOpen(false);
     } catch (error) {
       console.error("submit action error", error);
     }

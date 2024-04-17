@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { deleteDate } from "@/lib/actions/givingActions";
 import { createBrowserClient } from "@supabase/ssr";
 import { Plus, XOctagon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { getColumns } from "./Columns";
 import { DataTable } from "./DataTable";
 import EditBtn from "./DateEditBtn";
@@ -60,14 +60,18 @@ const DateList = ({ dates }: DateListProps) => {
     setGivingData(transformedData);
   };
   const handleFormSubmit = async (dateId: string) => {
-    await getGivingData(dateId);
     setForceUpdate((u) => u + 1);
+    await getGivingData(dateId);
   };
   useEffect(() => {
-    if (dateId) {
-      getGivingData(dateId);
+    const fetchData = async () => {
+      if(dateId){
+        await getGivingData(dateId)
+      }
     }
-  }, [dateId, forceUpdate]); // React to changes in either `dateId` or `forceUpdate`
+    fetchData()
+  }, [forceUpdate]); 
+  
 
   const columns = getColumns(handleFormSubmit);
 
