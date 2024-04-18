@@ -3,7 +3,6 @@ import { FormFields } from "@/app/dashboard/giving/component/DateForm";
 import { GivingFormData } from "@/app/dashboard/giving/component/GivingForm";
 import { revalidatePath } from "next/cache";
 import { SupabaseServerClient } from "../supabase/server";
-import { redirect } from "next/navigation";
 
 interface updateProps {
   amount: number;
@@ -70,6 +69,21 @@ export async function createGiving(givingData: GivingFormData) {
   revalidatePath("/dashboard/giving");
 }
 
+export async function getDateId(givingId: string): Promise<string> {
+  const supabase = await SupabaseServerClient();
+  let { data, error } = await supabase
+    .from("giving") // Assuming the table name is 'givings'
+    .select("dateId")
+    .eq("id", givingId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching dateId:", error);
+    return "";
+  }
+  return data?.dateId;
+}
+
 export async function updateGiving({
   amount,
   category,
@@ -78,9 +92,9 @@ export async function updateGiving({
   method,
   notes,
 }: updateProps) {
-  console.log(amount);
   const supabase = await SupabaseServerClient();
-  const { data, error } = await supabase
+  const dateID = await getDateId(givingId);
+  const { error } = await supabase
     .from("giving")
     .update({ amount, category, memberId, method, notes })
     .eq("id", givingId)
@@ -90,31 +104,17 @@ export async function updateGiving({
   } else {
     console.log("Success giving update");
   }
+  return dateID;
   revalidatePath("/dashboard/giving");
-}
-export async function getDateId(givingId: string): Promise<string> {
-  const supabase = await SupabaseServerClient();
-  let { data, error } = await supabase
-    .from("giving") // Assuming the table name is 'givings'
-    .select("dateId")
-    .eq("id", givingId)
-    .single()
-
-  if (error) {
-    console.error("Error fetching dateId:", error);
-    return "";
-  }
-  return data?.dateId;
 }
 
 export async function deleteGiving(givingId: string) {
   const supabase = await SupabaseServerClient();
-  const dateID = await getDateId(givingId)
-  console.log(dateID);
+  const dateID = await getDateId(givingId);
   const { error } = await supabase.from("giving").delete().eq("id", givingId);
   if (error) {
     throw new Error("err deleting giving");
   }
-  return dateID
+  return dateID;
   revalidatePath("/dashboard/giving");
 }

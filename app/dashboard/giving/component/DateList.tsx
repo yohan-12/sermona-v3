@@ -46,7 +46,6 @@ const DateList = ({ dates }: DateListProps) => {
       console.error("error fetching giving data", error);
       return null;
     }
-    console.log(data);
     // Transform data to include member name directly
     const transformedData = data.map((giving) => ({
       id: giving.id,
@@ -56,22 +55,13 @@ const DateList = ({ dates }: DateListProps) => {
       notes: giving.notes,
       memberName: (giving.member as unknown as Member).name,
     }));
-    console.log(transformedData);
     setGivingData(transformedData);
   };
   const handleFormSubmit = async (dateId: string) => {
-    setForceUpdate((u) => u + 1);
     await getGivingData(dateId);
+    setForceUpdate((u) => u + 1);
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      if(dateId){
-        await getGivingData(dateId)
-      }
-    }
-    fetchData()
-  }, [forceUpdate]); 
-  
+ 
 
   const columns = getColumns(handleFormSubmit);
 

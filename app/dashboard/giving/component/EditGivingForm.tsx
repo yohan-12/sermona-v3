@@ -33,12 +33,16 @@ interface EditGivingFormProps {
   onClose: () => void;
   handleFormSubmit: (dateId: string) => Promise<void>;
 }
-const EditGivingForm = ({ giving, onClose, handleFormSubmit }: EditGivingFormProps) => {
+const EditGivingForm = ({
+  giving,
+  onClose,
+  handleFormSubmit,
+}: EditGivingFormProps) => {
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
- 
+
   const [members, setMembers] = useState<MemberNameId[]>([]);
   const [inputValue, setInputValue] = useState(giving.memberName);
   const [filteredMembers, setFilteredMembers] = useState<MemberNameId[]>([]);
@@ -63,16 +67,8 @@ const EditGivingForm = ({ giving, onClose, handleFormSubmit }: EditGivingFormPro
 
   const onSubmit: SubmitHandler<GivingFormData> = async (data) => {
     try {
-      const {data: dateID, error} = await supabase.from('giving').select('dateId').eq("id", data.givingId).single() 
-      if(error){
-        console.error("error fetching dateID", error);
-      }
-      if(!dateID || !dateID.dateId){
-        console.error("no dateID found in the object")
-        return
-      }
-      handleFormSubmit(dateID.dateId)
-      await updateGiving(data)
+      const dateID = await updateGiving(data);
+      await handleFormSubmit(dateID)
       reset();
       setInputValue("");
       onClose();

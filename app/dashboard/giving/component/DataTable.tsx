@@ -74,7 +74,7 @@ export function DataTable<TData, TValue>({
     <div className="flex flex-col space-y-4">
       <div className="flex items-center justify-between">
         <span className="text-xl font-bold">{dateTitle}</span>
-        <span className="text-sm"> ({dateDescription})</span>
+        <span className="text-sm">{dateDescription}</span>
       </div>
       <div className="flex justify-between text-xl antialiased items-center">
         <div className="flex items-center">

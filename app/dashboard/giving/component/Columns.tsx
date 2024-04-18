@@ -98,7 +98,6 @@ export const getColumns = (handleFormSubmit: handleFormSubmit): ColumnDef<Giving
                 onClick={async ():Promise<void> => {
                  const dateID = await deleteGiving(giving.id);
                   // window.location.reload();
-                
                   handleFormSubmit(dateID)
                 }}
               >
