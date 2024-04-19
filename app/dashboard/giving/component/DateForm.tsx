@@ -69,11 +69,11 @@ export default function DateForm() {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? format(date, "PPP") : <span>날짜를 선택하세요</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-1">
           <Calendar
             mode="single"
             selected={date}
@@ -86,8 +86,8 @@ export default function DateForm() {
             type="text"
             placeholder="추가 메모"
           />
-          <Button disabled={isSubmitting} type="submit">
-            {isSubmitting ? "Loading..." : "Submit"}
+          <Button disabled={isSubmitting} type="submit" className="w-full">
+            {isSubmitting ? "저장중..." : "저장"}
           </Button>
         </form>
       </PopoverContent>

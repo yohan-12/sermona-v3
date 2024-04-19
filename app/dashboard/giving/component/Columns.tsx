@@ -1,10 +1,10 @@
 "use client";
-
+import { Icons } from "@/components/icons";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
-  SheetTitle
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreVertical } from "lucide-react";
@@ -24,14 +24,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deleteGiving } from "@/lib/actions/givingActions";
-import { useState } from "react";
+import { use, useState } from "react";
 
 type handleFormSubmit = (dateId: string) => Promise<void>;
 
-export const getColumns = (handleFormSubmit: handleFormSubmit): ColumnDef<Giving>[] => [
+export const getColumns = (
+  handleFormSubmit: handleFormSubmit
+): ColumnDef<Giving>[] => [
   {
     accessorKey: "memberName",
     header: "이름",
@@ -77,7 +79,9 @@ export const getColumns = (handleFormSubmit: handleFormSubmit): ColumnDef<Giving
     id: "actions",
     cell: ({ row }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [isSheetOpen, setIsSheetOpen] = useState(false)
+      const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+
       const giving = row.original;
       return (
         <>
@@ -90,18 +94,21 @@ export const getColumns = (handleFormSubmit: handleFormSubmit): ColumnDef<Giving
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>작업</DropdownMenuLabel>
-              <DropdownMenuItem className="hover:text-gray-400" onClick={() => setIsSheetOpen(true)}>
+              <DropdownMenuItem
+                className="hover:font-bold"
+                onClick={() => setIsSheetOpen(true)}
+              >
                 정보 수정
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="hover:bg-red-500 hover:text-white"
-                onClick={async ():Promise<void> => {
-                 const dateID = await deleteGiving(giving.id);
-                  // window.location.reload();
-                  handleFormSubmit(dateID)
+                className="relative h-[30px] w-40 overflow-hidden bg-white text-red-500 shadow-2xl transition-all before:absolute before:left-0 before:top-0 before:h-full before:w-0 before:duration-500 after:absolute after:right-0 after:top-0 after:h-full after:w-0 after:duration-500 hover:text-white hover:shadow-red-500 hover:before:w-2/4 hover:before:bg-red-500 hover:after:w-2/4 hover:after:bg-red-500"
+                // className="hover:bg-red-500 hover:text-white"
+                onClick={async (): Promise<void> => {
+                    const dateID = await deleteGiving(giving.id);
+                    handleFormSubmit(dateID);
                 }}
               >
-                삭제
+                  <span className="relative z-10">삭제</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
